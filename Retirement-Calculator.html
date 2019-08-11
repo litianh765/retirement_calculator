@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<form>
+  Your current age/您的年齡: <input type="number" name="Age" id="Age" value=30><br>
+  Current annual income/目前年薪$: <input type="number" name="AnnualIncome" id="AnnualIncome" value=30000><br>
+  <!--Spouse's annual income: <input type="number" name="SpouseAnnualIncome" id="SpouseAnnualIncome" value=30><br>-->
+  <!--Current retirement savings: <input type="number" name="CurrentRetirementSaving" id="CurrentRetirementSaving" value=40><br>-->
+  Desired retirement age/想要幾歲退休: <input type="number" name="DesiredRetirementAge" id="DesiredRetirementAge" value=65><br>
+  Number of years of retirement income/領取退休金年數: <input type="number" name="YearsOfRetirementIncome" id="YearsOfRetirementIncome" value=20><br>
+  Income replacement at retirement/替代率% (乘以年薪既為退休金): <input type="number" name="IncomeReplacemenAtRetirement" id="IncomeReplacemenAtRetirement" value=50><br>
+</form>
+<br>
+    
+<button onclick="result()">Calculate<br></button> 
+    
+<div>
+    <h2>Result</h2>
+    <p id="result"></p>
+</div>
+    
+ 
+<script>
+var currentAge;
+var currentAnnualIncome;
+var spouseAnnualIncome;
+var currentRetirementSavings;
+var desiredRetirementAge;
+var yearsOfRetirementIncome;
+var retirementYearSalary;
+var amountForRetirement;
+var annualSavingRate;
+var incomeReplacementAtRetirement;
+    
+var annualSalaryIncreasing;
+var retirementIncomeReplace;
+    
+function result() {
+  assignVariables();
+  annualSalaryIncreasing = getValueWithInflation(currentAnnualIncome, annualSalaryIncreasing.length, annualSalaryIncreasing);
+  retirementYearSalary = annualSalaryIncreasing[annualSalaryIncreasing.length - 1] * 1.03;
+  retirementIncomeReplace = getValueWithInflation(retirementYearSalary * 0.75, yearsOfRetirementIncome, retirementIncomeReplace);
+  amountForRetirement = getTotalAmount();
+  annualSavingRate = getAnnualSavingRate();
+  //print("Current Age: " + currentAge);
+  //print("Current Annual Income: " + currentAnnualIncome);
+  //print("Spouse Annual Income: " + spouseAnnualIncome);
+  //print("Current Retirement Saving: " + currentRetirementSavings);
+  //print("Desired Retirement Age: " + desiredRetirementAge);
+  //print("Number of Years of Retirement Income: " + yearsOfRetirementIncome);
+  print("Estimated Annual Saving/預計退休前每年存款: " + Math.round(currentAnnualIncome * annualSavingRate));
+}
+    
+function assignVariables(){
+    currentAge = getValues("Age");
+    currentAnnualIncome = getValues("AnnualIncome");
+    //spouseAnnualIncome = getValues("SpouseAnnualIncome");
+    //currentRetirementSavings = getValues("CurrentRetirementSaving");
+    desiredRetirementAge = getValues("DesiredRetirementAge");
+    yearsOfRetirementIncome = getValues("YearsOfRetirementIncome");
+    incomeReplacementAtRetirement = getValues("IncomeReplacemenAtRetirement");
+    
+    annualSalaryIncreasing = new Array(desiredRetirementAge - currentAge);
+    retirementIncomeReplace = new Array(yearsOfRetirementIncome);
+    estimatedAnnualSaving = new Array(desiredRetirementAge - currentAge)
+    
+    
+}
+   
+function getAnnualSavingRate(){
+    var asr = incomeReplacementAtRetirement * 0.01 * yearsOfRetirementIncome / (desiredRetirementAge - currentAge);
+    return asr;
+}
+//Get values by tag name
+function getValues(tagName){
+    return document.getElementById(tagName).value
+}
+
+//Calculate the amount of money for retirement
+function getTotalAmount(){
+    var total = 0;
+    for(var i=0;i<retirementIncomeReplace.length;i++){
+        total += retirementIncomeReplace[i];
+    }
+    return total;
+}    
+
+//Calculate each the array of money with inflation
+function getValueWithInflation(firstYear, length, array){
+    for(var i=0; i<length; i++){
+        if(i==0) array[i] = firstYear;
+        else{
+            array[i] = array[i - 1] * 1.03;
+            //array[i] = Math.round(array[i - 1] * 1.03);
+        }
+    }
+    return array;
+}
+    
+//Print info in HTML
+function print(info){
+    document.getElementById("result").innerHTML ="";
+    document.getElementById("result").innerHTML += "<p>" + info + "<br></p>";
+}
+</script>
+</body>
+</html>
